@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+
+if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50600) {
+    fwrite(STDERR, 'Minimum PHP version must be 5.6.0.');
+    exit(1);
+}
+
+set_error_handler(function ($severity, $message, $file, $line) {
+    if ($severity & error_reporting()) {
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    }
+});
+
+$loaded = false;
+if (class_exists('Phar')) {
+    try {
+        Phar::mapPhar('docker-etl.phar');
+        require_once 'phar://docker-etl.phar/vendor/autoload.php';
+        $loaded = true;
+    } catch (PharException $e) {
+    }
+}
+if (!$loaded) {
+    if (file_exists($autoloader = __DIR__ . '/../../autoload.php')) {
+        require_once $autoloader;
+    } else {
+        require_once __DIR__ . '/vendor/autoload.php';
+    }
+}
+unset($loaded);
+
+$application = new uuf6429\DockerEtl\Console\Application('@git-commit@');
+$application->run();
+
+__HALT_COMPILER();

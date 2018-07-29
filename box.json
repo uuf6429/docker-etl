@@ -1,0 +1,17 @@
+{
+  "chmod": "0755",
+  "compactors": ["Herrera\\Box\\Compactor\\Php"],
+  "extract": false,
+  "files": ["LICENSE"],
+  "finder": [
+    {
+      "name": ["*.php"],
+      "exclude": ["test"],
+      "in": ["src", "vendor"]
+    }
+  ],
+  "git-commit": "git-commit",
+  "output": "docker-etl.phar",
+  "stub": "docker-etl",
+  "web": false
+}
