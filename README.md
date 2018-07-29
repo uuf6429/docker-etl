@@ -1,4 +1,4 @@
-# docker-etl
+# docker-etl :watermelon:
 
 <!-- TODO badges go here -->
 
@@ -6,17 +6,17 @@
 - **T**ransform it - add, remove or replace configuration
 - **L**oad it back into docker, files or console
 
-## Installation
+## :floppy_disk: Installation
 
 There are a few ways you can get this up and running:
 
-1. Via [Composer (Globally)](https://getcomposer.org/):
+1. Via [:musical_score: Composer (Globally)](https://getcomposer.org/):
    ```bash
    $ compose global require uuf6429/docker-etl
    ```
    Make sure that Composer binaries are in your `PATH` (if not, either set it up or instead use `composer docker-etl ...`).
 
-2. Via [Docker Hub](https://hub.docker.com/r/uuf6429):
+2. Via [:whale: Docker Hub](https://hub.docker.com/r/uuf6429):
    ```bash
    $ docker pull uuf6429/docker-etl
    ```
@@ -25,18 +25,18 @@ There are a few ways you can get this up and running:
    $ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock uuf6429/docker-etl
    ```
 
-3. Via [PHIVE (as a phar)](https://phar.io/):
+3. Via [:five: PHIVE (as a phar)](https://phar.io/):
    ```bash
    $ phive install uuf6429/docker-etl
    ```
 
-4. Or you can download the desired [GitHub release](https://github.com/uuf6429/docker-etl/releases)
+4. Or you can download the desired [:octocat: GitHub release](https://github.com/uuf6429/docker-etl/releases)
 
 ## Concepts
 
 ### Argument Order
 
-Most arguments' order is important. This is due to [batch processing](#batch-processing); you will be able
+Most arguments' order is important. This is due to [batch processing](#-batch-processing); you will be able
 to influence the application and configuration state with every CLI argument.
 
 ### Batch Processing
@@ -69,19 +69,23 @@ Unfortunately, there are no current plans to achieve this at the moment, mostly 
 ### Wrong Intentions
 
 The application does not question your intentions. If you forget to output anything, it won't fail but it won't do anything either.
-Similarly, if you forget to extract any configuration, it will simply write an empty one later on.
+Similarly, if you forget to extract any configuration, it will continue with a clean slate.
 
-## Usage
+### Why a Watermelon?
+
+Why not? Who doesn't like watermelon? Also, because they have a fascinating history and deserve to be better known.
+
+## :rocket: Usage
 
 <!-- TODO arguments available go here -->
 
-## Extending
+## :electric_plug: Extending
 
 If you'd like to extend the functionality with your own, you can do so by injecting PHP into the process:
 ```bash
-$ docker-etl --include my-include.php
+$ docker-etl --include my-include.php \
              --extract-from-my-include \
-             --load-into-docker-compose host/docker-compose.yml:my-service \
+             --load-into-docker-compose docker-compose.yml:my-service
 ```
 And the contents of `my-include.php`:
 ```php
@@ -115,7 +119,7 @@ $application->addTasks([new MyExtractor()]);
 ```
 *Note: feel free to have your class(es) somewhere else and then require/autoload them in your include file.*
 
-## Rationale
+## :thought_balloon: Rationale
 
 I needed a tool to generate `docker run ...` for existing containers.
-Unfortunately, the tools I found to this were either broken or did not do everything I needed.
+Unfortunately, the tools I found to do this were either broken or did not do everything I needed.
