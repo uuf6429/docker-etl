@@ -28,7 +28,8 @@ class DockerCmd extends Task
      */
     public function getTaskOptionDescription()
     {
-        return 'Extracts container configuration by running <comment>docker inspect</comment>. Value must be the container id or name.';
+        return 'Extracts container configuration by running <comment>docker inspect</comment>.'
+            . "\nValue must be the container id or name.";
     }
 
     /**

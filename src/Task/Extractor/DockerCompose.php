@@ -5,6 +5,10 @@ namespace uuf6429\DockerEtl\Task\Extractor;
 use uuf6429\DockerEtl\Container\State;
 use uuf6429\DockerEtl\Task\Task;
 
+/**
+ * @todo
+ * @see https://github.com/docker/compose/blob/b2cc8a290afa937aa949047827ce44d77085ebec/compose/config/config_schema_v3.0.json
+ */
 class DockerCompose extends Task
 {
     /**

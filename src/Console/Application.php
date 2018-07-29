@@ -4,12 +4,14 @@ namespace uuf6429\DockerEtl\Console;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use uuf6429\DockerEtl\Task;
 
@@ -73,6 +75,8 @@ class Application extends \Symfony\Component\Console\Application
             new Task\Extractor\DockerCmd(),
             new Task\Extractor\DockerApi(),
             new Task\Extractor\DockerCompose(),
+            new Task\Transformer\SetValue(),
+            new Task\Loader\DockerCmd(),
         ];
     }
 
@@ -89,7 +93,9 @@ class Application extends \Symfony\Component\Console\Application
             $output = new ConsoleOutput();
         }
 
-        $logger = new ConsoleLogger($output);
+        $logger = $output instanceof ConsoleOutputInterface
+            ? new ConsoleLogger($output->getErrorOutput())
+            : new NullLogger();
 
         $input->setInteractive(false);
 
@@ -104,7 +110,7 @@ class Application extends \Symfony\Component\Console\Application
         $taskOptions = $this->parseTaskOptions(array_keys($this->tasks));
 
         $this->addCommands([
-            new RunCommand($this, $this->tasks, $taskOptions),
+            new RunCommand($this, $this->tasks, $taskOptions, $logger),
             new UpdateCommand($this),
         ]);
 

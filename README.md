@@ -45,11 +45,11 @@ This app allows you perform several actions after each other in one go.
 For example, you can load config for a container, change volumes, generate a docker-compose file and then do a few more
 actions on a completely different container:
 ```bash
-$ docker-etl --extract-from-docker-cmd my-service \
-             --add volume host/data:/app \
-             --load-into-docker-compose host/docker-compose.yml:my-service \
+$ docker-etl --extract-from-docker-cmd=my-service \
+             --add=volumes=host/data:/app \
+             --load-into-docker-compose=host/docker-compose.yml:my-service \
              --reset \
-             --extract-from-docker-cmd my-service2 \
+             --extract-from-docker-cmd=my-service2 \
              ...
 ```
 
