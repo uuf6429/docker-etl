@@ -4,6 +4,8 @@ namespace uuf6429\DockerEtl\Console;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -67,6 +69,7 @@ class Application extends \Symfony\Component\Console\Application
     private function getDefaultTasks()
     {
         return [
+            new Task\Reset(),
             new Task\Extractor\DockerCmd(),
             new Task\Extractor\DockerApi(),
             new Task\Extractor\DockerCompose(),
@@ -79,7 +82,7 @@ class Application extends \Symfony\Component\Console\Application
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
         if ($input === null) {
-            $input = new SequentialArgvInput();
+            $input = new ArgvInput();
         }
 
         if ($output === null) {
@@ -98,10 +101,17 @@ class Application extends \Symfony\Component\Console\Application
 
         $this->configureTasks($logger, $output);
 
+        $taskOptions = $this->parseTaskOptions(array_keys($this->tasks));
+
         $this->addCommands([
-            new RunCommand($this, $this->tasks),
+            new RunCommand($this, $this->tasks, $taskOptions),
             new UpdateCommand($this),
         ]);
+
+        if (!$input->getFirstArgument()) {
+            $cmd = $taskOptions ? ['run'] : ['help', 'run'];
+            $input = new ArgvInput(array_merge($_SERVER['argv'], $cmd));
+        }
 
         return parent::run($input, $output);
     }
@@ -153,5 +163,26 @@ class Application extends \Symfony\Component\Console\Application
             }
             $this->tasks[$taskOptionName] = $task;
         }
+    }
+
+    /**
+     * @param string[] $taskOptionNames
+     *
+     * @return array[]
+     */
+    private function parseTaskOptions(array $taskOptionNames)
+    {
+        $parsed = [];
+        $tokens = array_slice($_SERVER['argv'], 1);
+
+        foreach ($tokens as $token) {
+            if (preg_match('/^(--[^=]+)(?:=(.*))?$/', $token, $matches)
+                && in_array($matches[1], $taskOptionNames, true)
+            ) {
+                $parsed[] = [$matches[1], isset($matches[2]) ? $matches[2] : null];
+            }
+        }
+
+        return $parsed;
     }
 }

@@ -30,7 +30,7 @@ There are a few ways you can get this up and running:
    $ phive install uuf6429/docker-etl
    ```
 
-4. Or you can download the desired [:octocat: GitHub release](https://github.com/uuf6429/docker-etl/releases)
+4. Or you can download the desired [:octocat: GitHub release](https://github.com/uuf6429/docker-etl/releases).
 
 ## Concepts
 
@@ -60,7 +60,7 @@ To avoid incompatibilities and the possibility of the app to miss a docker setti
 - when parsing configuration, anything that was not used will cause a warning to point out that something might have been skipped
 - similarly, when generating configuration, if something cannot be generated, you'll also get a warning
 
-While the application tries to do a best-effort, it will not hide these sort of issues (so you could at least look them up in the logs).
+While the application tries to do a best-effort, it will not hide these sort of issues (so you could at least look them up in the logs/stderr).
 
 ### Parallel Processing
 
@@ -68,12 +68,13 @@ Unfortunately, there are no current plans to achieve this at the moment, mostly 
 
 ### Wrong Intentions
 
-The application does not question your intentions. If you forget to output anything, it won't fail but it won't do anything either.
+The application does not question your intentions and assumes you know what you're doing.
+If you forget to output anything, it won't fail but it won't do anything either.
 Similarly, if you forget to extract any configuration, it will continue with a clean slate.
 
 ### Why a Watermelon?
 
-Why not? Who doesn't like watermelon? Also, because they have a fascinating history and deserve to be better known.
+Why not? Who doesn't like watermelons? Also, because they have a [fascinating history](https://news.nationalgeographic.com/2015/08/150821-watermelon-fruit-history-agriculture/).
 
 ## :rocket: Usage
 
@@ -84,38 +85,38 @@ Why not? Who doesn't like watermelon? Also, because they have a fascinating hist
 If you'd like to extend the functionality with your own, you can do so by injecting PHP into the process:
 ```bash
 $ docker-etl --include my-include.php \
-             --extract-from-my-include \
-             --load-into-docker-compose docker-compose.yml:my-service
+             --set-random-name=cheese- \
+             ...
 ```
 And the contents of `my-include.php`:
 ```php
 <?php
 
-class MyExtractor extends \uuf6429\DockerEtl\Task\Task
+class RandomNameSetter extends \uuf6429\DockerEtl\Task\Task
 {
     public function getTaskOptionName()
     {
-        return '--extract-from-my-include';
+        return '--set-random-name';
     }
 
     public function getTaskOptionMode()
     {
-        return self::VALUE_NONE;
+        return self::VALUE_OPTIONAL;
     }
 
     public function getTaskOptionDescription()
     {
-        return 'My own extractor.';
+        return 'Sets container name to a random value, optionally with a prefix (option value).';
     }
 
-    public function execute(\uuf6429\DockerEtl\ContainerState $container)
+    public function execute(\uuf6429\DockerEtl\Container\State $container, $value)
     {
-        $container->setImage('my/image');
+        $container->setName(uniqid($value ?: '', true));
     }
 }
 
 /** @var \uuf6429\DockerEtl\Console\Application $application */
-$application->addTasks([new MyExtractor()]);
+$application->addTasks([new RandomNameSetter()]);
 ```
 *Note: feel free to have your class(es) somewhere else and then require/autoload them in your include file.*
 

@@ -1,18 +1,17 @@
 <?php
 
-namespace uuf6429\DockerEtl\Task\Extractor;
+namespace uuf6429\DockerEtl\Task;
 
 use uuf6429\DockerEtl\Container\State;
-use uuf6429\DockerEtl\Task\Task;
 
-class DockerCmd extends Task
+class Reset extends Task
 {
     /**
      * @inheritdoc
      */
     public function getTaskOptionName()
     {
-        return '--extract-from-docker-cmd';
+        return '--reset';
     }
 
     /**
@@ -20,7 +19,7 @@ class DockerCmd extends Task
      */
     public function getTaskOptionMode()
     {
-        return self::VALUE_REQUIRED;
+        return self::VALUE_NONE;
     }
 
     /**
@@ -28,7 +27,7 @@ class DockerCmd extends Task
      */
     public function getTaskOptionDescription()
     {
-        return 'Extracts container configuration by running <comment>docker inspect</comment>. Value must be the container id or name.';
+        return 'Resets container configuration to defaults.';
     }
 
     /**
@@ -36,6 +35,6 @@ class DockerCmd extends Task
      */
     public function execute(State $container, $value)
     {
-        // TODO: Implement execute() method.
+        $container->reset();
     }
 }

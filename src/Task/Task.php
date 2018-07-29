@@ -3,7 +3,7 @@
 namespace uuf6429\DockerEtl\Task;
 
 use Symfony\Component\Console\Input\InputOption;
-use uuf6429\DockerEtl\ContainerState;
+use uuf6429\DockerEtl\Container\State;
 
 abstract class Task
 {
@@ -26,5 +26,9 @@ abstract class Task
      */
     abstract public function getTaskOptionDescription();
 
-    abstract public function execute(ContainerState $container);
+    /**
+     * @param State $container
+     * @param null|string $value
+     */
+    abstract public function execute(State $container, $value);
 }

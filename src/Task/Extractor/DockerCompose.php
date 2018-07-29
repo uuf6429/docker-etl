@@ -2,6 +2,7 @@
 
 namespace uuf6429\DockerEtl\Task\Extractor;
 
+use uuf6429\DockerEtl\Container\State;
 use uuf6429\DockerEtl\Task\Task;
 
 class DockerCompose extends Task
@@ -37,7 +38,7 @@ class DockerCompose extends Task
     /**
      * @inheritdoc
      */
-    public function execute()
+    public function execute(State $container, $value)
     {
         // TODO: Implement execute() method.
     }
