@@ -25,9 +25,19 @@ class State
     public $environment;
 
     /**
-     * @var VolumeManager|Volume[]
+     * @var null|string|string[]
      */
-    protected $volumes = [];
+    public $entrypoint;
+
+    /**
+     * @var null|string|string[]
+     */
+    public $cmd;
+
+    /**
+     * @var VolumeCollection|Volume[]
+     */
+    public $volumes;
 
     public function __construct()
     {
@@ -40,6 +50,6 @@ class State
         $this->image = null;
         $this->labels = new Dictionary();
         $this->environment = new Dictionary();
-        $this->volumes = new VolumeManager();
+        $this->volumes = new VolumeCollection();
     }
 }
