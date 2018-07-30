@@ -15,20 +15,31 @@ class State
     public $image;
 
     /**
-     * @var array
+     * @var Dictionary
      */
-    public $labels = [];
+    public $labels;
 
     /**
-     * @var array
+     * @var Dictionary
+     */
+    public $environment;
+
+    /**
+     * @var VolumeManager|Volume[]
      */
     protected $volumes = [];
+
+    public function __construct()
+    {
+        $this->reset();
+    }
 
     public function reset()
     {
         $this->name = null;
         $this->image = null;
-        $this->labels = [];
-        $this->volumes = [];
+        $this->labels = new Dictionary();
+        $this->environment = new Dictionary();
+        $this->volumes = new VolumeManager();
     }
 }

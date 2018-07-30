@@ -111,7 +111,7 @@ class RandomNameSetter extends \uuf6429\DockerEtl\Task\Task
 
     public function execute(\uuf6429\DockerEtl\Container\State $container, $value)
     {
-        $container->setName(uniqid($value ?: '', true));
+        $container->name = uniqid($value ?: '', true);
     }
 }
 
@@ -119,6 +119,16 @@ class RandomNameSetter extends \uuf6429\DockerEtl\Task\Task
 $application->addTasks([new RandomNameSetter()]);
 ```
 *Note: feel free to have your class(es) somewhere else and then require/autoload them in your include file.*
+
+### Service Awareness
+
+If your task class depends on some service (for example logging), just implement one of the interfaces below and to receive the service:
+
+- `\Psr\Log\LoggerAwareInterface`
+- `\uuf6429\DockerEtl\Console\ApplicationAwareInterface`
+- `\uuf6429\DockerEtl\Console\OutputAwareInterface`
+
+*Note: the service becomes available after construction - it won't be available in your constructor.*
 
 ## :thought_balloon: Rationale
 
