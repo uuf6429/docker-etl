@@ -7,12 +7,17 @@ class State
     /**
      * @var null|string
      */
-    protected $name;
+    public $name;
+
+    /**
+     * @var null|string
+     */
+    public $image;
 
     /**
      * @var array
      */
-    protected $labels = [];
+    public $labels = [];
 
     /**
      * @var array
@@ -22,6 +27,7 @@ class State
     public function reset()
     {
         $this->name = null;
+        $this->image = null;
         $this->labels = [];
         $this->volumes = [];
     }
