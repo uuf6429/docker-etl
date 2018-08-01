@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\DockerEtl;
+namespace uuf6429\DockerEtl\PathMarker;
 
 class PathMarker
 {
@@ -27,14 +27,24 @@ class PathMarker
     protected function doMapToPaths($basePath, $value)
     {
         if (is_array($value)) {
+            $scalarsOnly = true;
             foreach ($value as $key => $subValue) {
-                $this->doMapToPaths("{$basePath}[{$key}]", $subValue);
+                if (is_array($subValue) || is_object($subValue)) {
+                    $this->doMapToPaths("{$basePath}[{$key}]", $subValue);
+                    $scalarsOnly = false;
+                }
+            }
+            if (!$scalarsOnly) {
+                return;
             }
         } elseif (is_object($value)) {
             foreach (get_object_vars($value) as $prp => $subValue) {
                 $this->doMapToPaths($basePath ? "{$basePath}.{$prp}" : $prp, $subValue);
             }
-        } elseif ($basePath !== '') {
+            return;
+        }
+
+        if ($basePath !== '') {
             $this->paths[$basePath] = false;
         }
     }
@@ -82,6 +92,20 @@ class PathMarker
     }
 
     /**
+     * @return bool
+     */
+    public function hasUnmarkedPaths()
+    {
+        foreach ($this->paths as $marked) {
+            if (!$marked) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return string[]
      */
     public function getUnmarkedPaths()
@@ -92,5 +116,22 @@ class PathMarker
                 return !$marked;
             }
         ));
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getUniqueUnmarkedPaths()
+    {
+        return array_keys(
+            array_flip(
+                array_map(
+                    function ($path) {
+                        return preg_replace('/\\[[^\\]]*\\]/', '[*]', $path);
+                    },
+                    $this->getUnmarkedPaths()
+                )
+            )
+        );
     }
 }

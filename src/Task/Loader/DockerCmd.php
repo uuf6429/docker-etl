@@ -2,10 +2,9 @@
 
 namespace uuf6429\DockerEtl\Task\Loader;
 
-use uuf6429\DockerEtl\Container\State;
-use uuf6429\DockerEtl\Task\Task;
+use uuf6429\DockerEtl\Container\Container;
 
-class DockerCmd extends Task
+class DockerCmd extends Loader
 {
     /**
      * @inheritdoc
@@ -38,7 +37,7 @@ class DockerCmd extends Task
     /**
      * @inheritdoc
      */
-    public function execute(State $container, $value)
+    protected function doExecute($container, $value)
     {
         if (strpos($value, '>>') === 0) {
             $handle = fopen(substr($value, 2), 'ab');
@@ -48,12 +47,54 @@ class DockerCmd extends Task
             throw new \InvalidArgumentException('File mode was not specified (">" or ">>" was expected).');
         }
 
-        fwrite($handle, $this->generateCommandLine() . PHP_EOL);
+        fwrite($handle, $this->generateCommandLine($container) . PHP_EOL);
         fclose($handle);
     }
 
-    private function generateCommandLine()
+    /**
+     * @param Container $container
+     * @return string
+     */
+    private function generateCommandLine($container)
     {
-        return 'docker run TODO';
+        $cmd = ['docker', 'run'];
+
+        // add options
+        if ($container->name) {
+            $cmd[] = '--name';
+            $cmd[] = $container->name;
+        }
+        if ($container->entrypoint) {
+            $cmd[] = '--entrypoint';
+            $cmd[] = $container->entrypoint;
+        }
+        // TODO add other options
+
+        // add image
+        if ($container->image) {
+            $cmd[] = $container->image;
+        }
+
+        // add cmd+args
+        if ($container->cmd) {
+            $cmd = array_merge($cmd, $container->cmd);
+        }
+
+        return implode(' ', $this->escapeCommandLine($cmd));
+    }
+
+    /**
+     * @param string[] $cli
+     * @return string[]
+     */
+    private function escapeCommandLine(array $cli)
+    {
+        return array_map(
+            function ($arg) {
+                return preg_match('/[^a-zA-Z\\d]/', $arg)
+                    ? escapeshellarg($arg) : $arg;
+            },
+            $cli
+        );
     }
 }

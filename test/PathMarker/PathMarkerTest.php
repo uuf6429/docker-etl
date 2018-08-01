@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\DockerEtl;
+namespace uuf6429\DockerEtl\PathMarker;
 
 use PHPUnit\Framework\TestCase;
 
@@ -47,10 +47,7 @@ class PathMarkerTest extends TestCase
                     'foo' => 100,
                     'bar' => 200,
                 ],
-                '$expectedPaths' => [
-                    '[foo]',
-                    '[bar]',
-                ],
+                '$expectedPaths' => [],
                 '$expectedExceptionMessage' => null,
             ],
             'simple object' => [
@@ -66,10 +63,7 @@ class PathMarkerTest extends TestCase
             ],
             'simple array' => [
                 '$sourceData' => ['foo', 'bar'],
-                '$expectedPaths' => [
-                    '[0]',
-                    '[1]',
-                ],
+                '$expectedPaths' => [],
                 '$expectedExceptionMessage' => null,
             ],
             'object containing some stuff' => [
@@ -87,8 +81,7 @@ class PathMarkerTest extends TestCase
                     'bar.foo',
                     'bar.bar',
                     'bar.baz',
-                    'baz[0]',
-                    'baz[1]',
+                    'baz',
                 ],
                 '$expectedExceptionMessage' => null,
             ],
@@ -108,11 +101,16 @@ class PathMarkerTest extends TestCase
     public function testManagingMarkers()
     {
         $sut = new PathMarker();
+
         $sut->addPaths(['foo', 'bar']);
+        $this->assertTrue($sut->hasUnmarkedPaths());
         $this->assertEquals(['foo', 'bar'], $sut->getUnmarkedPaths());
 
         $sut->markPath('foo');
         $this->assertEquals(['bar'], $sut->getUnmarkedPaths());
+
+        $sut->markPath('bar');
+        $this->assertFalse($sut->hasUnmarkedPaths());
 
         $sut->unmarkAllPaths();
         $this->assertEquals(['foo', 'bar'], $sut->getUnmarkedPaths());
@@ -131,5 +129,18 @@ class PathMarkerTest extends TestCase
 
         $this->expectExceptionMessage('Cannot mark path "bar" since it does not exist.');
         $sut->markPath('bar');
+    }
+
+    public function testGettingUniqueUnmarkedPaths()
+    {
+        $sut = new PathMarker();
+        $sut->addPaths(['foo[bar].baz', 'foo[bzz].baz', 'bar.aa[0]', 'baz[0]', 'baz[1]', 'bar.aa[2]']);
+        $sut->markPath('baz[0]');
+        $sut->markPath('baz[1]');
+
+        $this->assertEquals(
+            ['foo[*].baz', 'bar.aa[*]'],
+            $sut->getUniqueUnmarkedPaths()
+        );
     }
 }

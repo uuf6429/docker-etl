@@ -55,7 +55,7 @@ class RunCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $container = new Container\State();
+        $container = new Container\Container();
         foreach ($this->taskOptions as list($key, $val)) {
             try {
                 $this->logger->debug("Applying task $key=$val ...");

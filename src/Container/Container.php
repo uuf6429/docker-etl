@@ -2,7 +2,7 @@
 
 namespace uuf6429\DockerEtl\Container;
 
-class State
+class Container
 {
     /**
      * @var null|string
@@ -30,7 +30,7 @@ class State
     public $entrypoint;
 
     /**
-     * @var null|string|string[]
+     * @var null|string[]
      */
     public $cmd;
 

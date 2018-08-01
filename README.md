@@ -109,7 +109,7 @@ class RandomNameSetter extends \uuf6429\DockerEtl\Task\Task
         return 'Sets container name to a random value, optionally with a prefix (option value).';
     }
 
-    public function execute(\uuf6429\DockerEtl\Container\State $container, $value)
+    public function execute(\uuf6429\DockerEtl\Container\Container $container, $value)
     {
         $container->name = uniqid($value ?: '', true);
     }

@@ -3,7 +3,7 @@
 namespace uuf6429\DockerEtl\Task\Transformer;
 
 use PHPUnit\Framework\TestCase;
-use uuf6429\DockerEtl\Container\State;
+use uuf6429\DockerEtl\Container\Container;
 use uuf6429\DockerEtl\Container\Dictionary;
 use uuf6429\DockerEtl\Container\VolumeCollection;
 
@@ -19,7 +19,7 @@ class SetValueTest extends TestCase
     public function testSetValue($optionValue, $expectedState, $expectedExceptionMessage)
     {
         $sut = new SetValue();
-        $container = new State();
+        $container = new Container();
 
         if($expectedExceptionMessage){
             $this->expectExceptionMessage($expectedExceptionMessage);
@@ -33,7 +33,7 @@ class SetValueTest extends TestCase
     {
         return [
             'set container image' => [
-                '$optionValue' => 'image=myimage:1234',
+                '$optionValue' => 'image="myimage:1234"',
                 '$expectedState' => (object)[
                     'name' => null,
                     'image' => 'myimage:1234',
@@ -46,17 +46,17 @@ class SetValueTest extends TestCase
                 '$expectedExceptionMessage' => null,
             ],
             'set nonexistent property' => [
-                '$optionValue' => 'foo=bar',
+                '$optionValue' => 'foo="bar"',
                 '$expectedState' => null,
                 '$expectedExceptionMessage' => 'Cannot set foo; property foo does not seem to exist.',
             ],
             'set nonexistent key' => [
-                '$optionValue' => 'volumes[0].dummykey=dummyvalue',
+                '$optionValue' => 'volumes[0].dummykey="dummyvalue"',
                 '$expectedState' => null,
                 '$expectedExceptionMessage' => 'Cannot set volumes[0].dummykey; property dummykey does not seem to exist.',
             ],
             'set nonexistent property in a non-object' => [
-                '$optionValue' => 'name.foo=bar',
+                '$optionValue' => 'name.foo="bar"',
                 '$expectedState' => null,
                 '$expectedExceptionMessage' => 'Cannot set name.foo; name is not an object.',
             ],

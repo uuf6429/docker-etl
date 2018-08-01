@@ -2,7 +2,7 @@
 
 namespace uuf6429\DockerEtl\Task\Extractor;
 
-use uuf6429\DockerEtl\Container\State;
+use uuf6429\DockerEtl\Container\Container;
 use uuf6429\DockerEtl\Task\Task;
 
 class DockerCmd extends Task
@@ -35,7 +35,7 @@ class DockerCmd extends Task
     /**
      * @inheritdoc
      */
-    public function execute(State $container, $value)
+    public function execute(Container $container, $value)
     {
         // TODO: Implement execute() method.
     }

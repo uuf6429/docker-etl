@@ -2,7 +2,7 @@
 
 namespace uuf6429\DockerEtl\Task\Transformer;
 
-use uuf6429\DockerEtl\Container\State;
+use uuf6429\DockerEtl\Container\Container;
 use uuf6429\DockerEtl\Task\Task;
 
 class SetValue extends Task
@@ -36,7 +36,7 @@ class SetValue extends Task
     /**
      * @inheritdoc
      */
-    public function execute(State $container, $value)
+    public function execute(Container $container, $value)
     {
         list($path, $val) = explode('=', $value, 2);
 
@@ -62,7 +62,7 @@ class SetValue extends Task
             }
             $previousPart = $part;
         }
-        $var = $val;
+        $var = json_decode($val);
     }
 
     /**

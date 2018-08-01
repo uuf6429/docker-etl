@@ -1,6 +1,8 @@
 <?php
 
-namespace uuf6429\DockerEtl;
+/** @noinspection PhpUnusedPrivateFieldInspection */
+
+namespace uuf6429\DockerEtl\PathMarker;
 
 use PHPUnit\Framework\TestCase;
 

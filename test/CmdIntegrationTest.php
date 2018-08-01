@@ -29,30 +29,33 @@ class CmdIntegrationTest extends TestCase
                 'php',
                 'docker-etl',
                 "--extract-from-docker-cmd=$originalContainer",
-                '--set=image=php:7-alpine',
-                '--set=cmd=php -v',
+                '--set=image="php:7-alpine"',
+                '--set=cmd=["php","-v"]',
                 '--load-into-docker-cmd=>>php://stdout',
                 '-vvv',
             ],
             dirname(__DIR__)
         );
         $testProcess->mustRun();
+
         $this->assertEquals(
             [
-                'docker run TODO',
-                ''
+                'stdout' => [
+                    'docker run "php:7-alpine" php "-v"',
+                    ''
+                ],
+                'stderr' => [
+                    "[debug] Applying task --extract-from-docker-cmd={$originalContainer} ...",
+                    '[debug] Applying task --set=image="php:7-alpine" ...',
+                    '[debug] Applying task --set=cmd=["php","-v"] ...',
+                    '[debug] Applying task --load-into-docker-cmd=>>php://stdout ...',
+                    '',
+                ],
             ],
-            explode(PHP_EOL, $testProcess->getOutput())
-        );
-        $this->assertEquals(
             [
-                "[debug] Applying task --extract-from-docker-cmd={$originalContainer} ...",
-                '[debug] Applying task --set=image=php:7-alpine ...',
-                '[debug] Applying task --set=cmd=php -v ...',
-                '[debug] Applying task --load-into-docker-cmd=>>php://stdout ...',
-                '',
-            ],
-            explode(PHP_EOL, $testProcess->getErrorOutput())
+                'stdout' => explode(PHP_EOL, $testProcess->getOutput()),
+                'stderr' => explode(PHP_EOL, $testProcess->getErrorOutput())
+            ]
         );
     }
 }

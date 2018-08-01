@@ -2,7 +2,7 @@
 
 namespace uuf6429\DockerEtl\Task;
 
-use uuf6429\DockerEtl\Container\State;
+use uuf6429\DockerEtl\Container\Container;
 
 class Reset extends Task
 {
@@ -33,7 +33,7 @@ class Reset extends Task
     /**
      * @inheritdoc
      */
-    public function execute(State $container, $value)
+    public function execute(Container $container, $value)
     {
         $container->reset();
     }
