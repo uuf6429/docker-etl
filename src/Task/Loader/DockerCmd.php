@@ -37,7 +37,7 @@ class DockerCmd extends Loader
     /**
      * @inheritdoc
      */
-    protected function doExecute($container, $value)
+    protected function load($container, $value)
     {
         if (strpos($value, '>>') === 0) {
             $handle = fopen(substr($value, 2), 'ab');

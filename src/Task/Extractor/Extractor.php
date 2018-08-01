@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\DockerEtl\Task\Loader;
+namespace uuf6429\DockerEtl\Task\Extractor;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -9,21 +9,22 @@ use uuf6429\DockerEtl\PathMarker\MarkerProxy;
 use uuf6429\DockerEtl\PathMarker\PathMarker;
 use uuf6429\DockerEtl\Task\Task;
 
-abstract class Loader extends Task implements LoggerAwareInterface
+abstract class Extractor extends Task implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /**
      * @inheritdoc
      */
-    final public function execute(Container $container, $value)
+    public function execute(Container $container, $value)
     {
         $pathMarker = new PathMarker();
 
         try {
-            $proxy = new MarkerProxy($container, $pathMarker);
-            $pathMarker->mapToPaths($container);
-            $this->load($proxy, $value);
+            $rawConfig = $this->extract($value);
+            $proxy = new MarkerProxy($rawConfig, $pathMarker);
+            $pathMarker->mapToPaths($rawConfig);
+            $this->process($container, $proxy);
         } finally {
             if ($pathMarker->hasUnmarkedPaths()) {
                 $this->logger->warning(
@@ -38,8 +39,14 @@ abstract class Loader extends Task implements LoggerAwareInterface
     }
 
     /**
-     * @param MarkerProxy|Container $container
      * @param null|string $value
+     * @return object
      */
-    abstract protected function load($container, $value);
+    abstract protected function extract($value);
+
+    /**
+     * @param Container $container
+     * @param MarkerProxy|object $extractedConfig
+     */
+    abstract protected function process(Container $container, $extractedConfig);
 }

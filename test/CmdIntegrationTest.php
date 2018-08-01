@@ -41,7 +41,7 @@ class CmdIntegrationTest extends TestCase
         $this->assertEquals(
             [
                 'stdout' => [
-                    'docker run "php:7-alpine" php "-v"',
+                    'docker run "--name" "' . $originalContainer . '" "php:7-alpine" php "-v"',
                     ''
                 ],
                 'stderr' => [
