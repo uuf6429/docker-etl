@@ -2,7 +2,7 @@
 
 namespace uuf6429\DockerEtl\PathMarker;
 
-class MarkerProxy implements PropertyAccess, \ArrayAccess, \Countable
+class MarkerProxy implements PropertyAccess, \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * @var object|array
@@ -122,6 +122,24 @@ class MarkerProxy implements PropertyAccess, \ArrayAccess, \Countable
     public function __unset($name)
     {
         unset($this->target->$name);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIterator()
+    {
+        if (!is_iterable($this->target)) {
+            return null; // TODO should we throw an exception instead?
+        }
+
+        $result = [];
+        foreach ($this->target as $offset => $value) {
+            $path = $this->buildArrayPath($offset);
+            $result[$offset] = $this->isProxyable($value) ? $this->wrapValue($value, $path) : $value;
+        }
+
+        return new \ArrayIterator($result);
     }
 
     /**

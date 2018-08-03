@@ -57,38 +57,81 @@ YAML
         parent::tearDown();
     }
 
-    public function testModifyingRedisContainer()
+    /**
+     * @param string $serviceName
+     * @param string[] $additionalTasks
+     * @param string[] $expectedStdOut
+     * @param string[] $expectedStdErr
+     *
+     * @dataProvider modifyContainerDataProvider
+     */
+    public function testModifyingContainer($serviceName, array $additionalTasks, array $expectedStdOut, array $expectedStdErr)
     {
         $testProcess = new Process(
-            [
-                'php',
-                'docker-etl',
-                "--extract-from-docker-compose={$this->testFile}:redis",
-                '--set=image="redis:alpine"',
-                '--load-into-docker-cmd=>>php://stdout',
-                '-vvv',
-            ],
+            array_merge(
+                [
+                    'php',
+                    'docker-etl',
+                    "--extract-from-docker-compose={$this->testFile}:{$serviceName}",
+                ],
+                $additionalTasks,
+                [
+                    '--load-into-docker-cmd=>>php://stdout',
+                    '-vvv',
+                ]
+            ),
             dirname(__DIR__)
         );
         $testProcess->mustRun();
 
         $this->assertEquals(
             [
-                'stdout' => [
+                'stdout' => $expectedStdOut,
+                'stderr' => $expectedStdErr,
+            ],
+            [
+                'stdout' => explode(PHP_EOL, $testProcess->getOutput()),
+                'stderr' => explode(PHP_EOL, str_replace($this->testFile, 'docker-compose.yml', $testProcess->getErrorOutput()))
+            ]
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function modifyContainerDataProvider()
+    {
+        return [
+            'modify simple service (redis)' => [
+                '$serviceName' => 'redis',
+                '$additionalTasks' => ['--set=image="redis:alpine"'],
+                '$expectedStdOut' =>  [
                     'docker run "redis:alpine"',
                     ''
                 ],
-                'stderr' => [
-                    "[debug] Applying task --extract-from-docker-compose={$this->testFile}:redis ...",
+                '$expectedStdErr' => [
+                    '[debug] Applying task --extract-from-docker-compose=docker-compose.yml:redis ...',
                     '[debug] Applying task --set=image="redis:alpine" ...',
                     '[debug] Applying task --load-into-docker-cmd=>>php://stdout ...',
                     '',
                 ],
             ],
-            [
-                'stdout' => explode(PHP_EOL, $testProcess->getOutput()),
-                'stderr' => explode(PHP_EOL, $testProcess->getErrorOutput())
-            ]
-        );
+            'modify built web service (web)' => [
+                '$serviceName' => 'web',
+                '$additionalTasks' => ['--set=image="cheese"'],
+                '$expectedStdOut' =>  [
+                    'docker run "--env" "DATADOG_HOST=datadog" cheese',
+                    ''
+                ],
+                '$expectedStdErr' => [
+                    '[debug] Applying task --extract-from-docker-compose=docker-compose.yml:web ...',
+                    '[warning] The service builds an image and therefore the image tag cannot be determined.',
+                    '[warning] Some configuration was not used by uuf6429\DockerEtl\Task\Extractor\DockerCompose: service.ports, service.volumes, service.links',
+                    '[debug] Applying task --set=image="cheese" ...',
+                    '[debug] Applying task --load-into-docker-cmd=>>php://stdout ...',
+                    '',
+                ],
+            ],
+        ];
     }
 }

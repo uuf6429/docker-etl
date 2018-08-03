@@ -78,7 +78,20 @@ class DockerCompose extends Extractor
             $container->image = $extractedConfig->service->image;
         }
 
-        // TODO: Implement process() method.
+        if (!empty($extractedConfig->service->command)) {
+            $container->cmd = $this->parseCommand($extractedConfig->service->command);
+        }
+
+        // TODO handle ports
+        // TODO handle volumes
+
+        if (!empty($extractedConfig->service->environment)) {
+            if (is_array($extractedConfig->service->environment)) {
+                array_map([$container->environment, 'addFromString'], $extractedConfig->service->environment);
+            } elseif (is_object($extractedConfig->service->environment)) {
+                $container->environment->addFromArray(get_object_vars($extractedConfig->service->environment));
+            }
+        }
     }
 
     /**
@@ -94,5 +107,18 @@ class DockerCompose extends Extractor
         }
 
         return $parts;
+    }
+
+    /**
+     * @param string|string[] $cmd
+     * @return string[]
+     */
+    private function parseCommand($cmd)
+    {
+        if (is_array($cmd)) {
+            return $cmd;
+        }
+
+        // TODO somehow split string into command and arguments
     }
 }

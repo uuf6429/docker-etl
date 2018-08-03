@@ -2,38 +2,12 @@
 
 namespace uuf6429\DockerEtl\Container;
 
-class Dictionary implements \ArrayAccess, \Countable
+class Dictionary implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * @var array
      */
     protected $data = [];
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    public function add($key, $value)
-    {
-        $this->data[$key] = $value;
-    }
-
-    /**
-     * @param string $string
-     */
-    public function addFromString($string)
-    {
-        $parsed = explode('=', $string, 2);
-        $this->add($parsed[0], isset($parsed[1]) ? $parsed[1] : '');
-    }
-
-    /**
-     * @param array $array
-     */
-    public function addFromArray(array $array)
-    {
-        $this->data = array_merge($this->data, $array);
-    }
 
     /**
      * @inheritdoc
@@ -73,5 +47,39 @@ class Dictionary implements \ArrayAccess, \Countable
     public function count()
     {
         return count($this->data);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->data);
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function add($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
+
+    /**
+     * @param string $string
+     */
+    public function addFromString($string)
+    {
+        $parsed = explode('=', $string, 2);
+        $this->add($parsed[0], isset($parsed[1]) ? $parsed[1] : '');
+    }
+
+    /**
+     * @param array $array
+     */
+    public function addFromArray(array $array)
+    {
+        $this->data = array_merge($this->data, $array);
     }
 }
