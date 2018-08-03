@@ -17,12 +17,13 @@
     "psr/log": "^1.0",
     "symfony/console": "^3.0",
     "symfony/process": "^3.0",
+    "symfony/yaml": "^3.0",
     "padraic/phar-updater": "^1.0",
     "justinrainbow/json-schema": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.5",
-    "kherge/box": "~2.5"
+    "humbug/box": "^2.5"
   },
   "autoload": {
     "psr-4": {
