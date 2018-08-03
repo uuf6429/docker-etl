@@ -114,8 +114,10 @@ class PathMarkerTest extends TestCase
 
         $sut->unmarkAllPaths();
         $this->assertEquals(['foo', 'bar'], $sut->getUnmarkedPaths());
+        $this->assertTrue($sut->pathExist('bar'));
 
         $sut->removePaths(['bar']);
+        $this->assertFalse($sut->pathExist('bar'));
         $this->assertEquals(['foo'], $sut->getUnmarkedPaths());
 
         $sut->removeAllPaths();

@@ -76,6 +76,15 @@ class PathMarker
 
     /**
      * @param string $path
+     * @return bool
+     */
+    public function pathExist($path)
+    {
+        return array_key_exists($path, $this->paths);
+    }
+
+    /**
+     * @param string $path
      */
     public function markPath($path)
     {

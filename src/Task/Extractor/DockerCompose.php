@@ -2,14 +2,12 @@
 
 namespace uuf6429\DockerEtl\Task\Extractor;
 
+use Symfony\Component\Yaml\Yaml;
 use uuf6429\DockerEtl\Container\Container;
+use uuf6429\DockerEtl\PathMarker\MarkerProxy;
 use uuf6429\DockerEtl\Task\Task;
 
-/**
- * @todo
- * @see https://github.com/docker/compose/blob/b2cc8a290afa937aa949047827ce44d77085ebec/compose/config/config_schema_v3.0.json
- */
-class DockerCompose extends Task
+class DockerCompose extends Extractor
 {
     /**
      * @inheritdoc
@@ -42,8 +40,59 @@ class DockerCompose extends Task
     /**
      * @inheritdoc
      */
-    public function execute(Container $container, $value)
+    protected function extract($value)
     {
-        // TODO: Implement execute() method.
+        list($path, $name) = $this->parseValue($value);
+
+        $config = Yaml::parseFile($path, Yaml::PARSE_OBJECT_FOR_MAP);
+
+        if (!is_object($config) || empty($config->services)) {
+            throw new \RuntimeException('Invalid file structure or no services defined.');
+        }
+
+        if (!isset($config->services->$name)) {
+            throw new \RuntimeException(sprintf(
+                'Service key "%s" not found (available service keys: %s).',
+                $name,
+                implode(', ', array_keys(get_object_vars($config->services)))
+            ));
+        }
+
+        // focus on the service we're interested in
+        $config->service = $config->services->$name;
+
+        // removing uninteresting parts
+        unset($config->version, $config->services);
+
+        return $config;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function process(Container $container, $extractedConfig)
+    {
+        if (!empty($extractedConfig->service->build)) {
+            $this->logger->warning('The service builds an image and therefore the image tag cannot be determined.');
+        } else {
+            $container->image = $extractedConfig->service->image;
+        }
+
+        // TODO: Implement process() method.
+    }
+
+    /**
+     * @param string $value
+     * @return string[]
+     */
+    private function parseValue($value)
+    {
+        $parts = array_reverse(array_map('strrev', explode(':', strrev($value), 2)));
+
+        if (count($parts) !== 2) {
+            throw new \InvalidArgumentException('Argument must be a path/url followed by a colon and the service key.');
+        }
+
+        return $parts;
     }
 }

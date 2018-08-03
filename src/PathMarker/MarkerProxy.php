@@ -36,7 +36,10 @@ class MarkerProxy implements PropertyAccess, \ArrayAccess, \Countable
      */
     public function offsetExists($offset)
     {
-        $this->markArrayPath($offset);
+        $path = $this->buildArrayPath($offset);
+        if ($this->pathMarker->pathExist($path)) {
+            $this->pathMarker->markPath($path);
+        }
 
         return array_key_exists($offset, $this->target);
     }
@@ -104,7 +107,11 @@ class MarkerProxy implements PropertyAccess, \ArrayAccess, \Countable
      */
     public function __isset($name)
     {
-        $this->markObjectPath($name);
+        $path = $this->buildObjectPath($name);
+        if ($this->pathMarker->pathExist($path)) {
+            $this->pathMarker->markPath($path);
+        }
+
 
         return isset($this->target->$name);
     }

@@ -50,7 +50,10 @@ class DockerCmd extends Extractor
             throw new JsonDecodingException($error);
         }
 
+        // focus on first item in config
         $config = $config[0];
+
+        // removing uninteresting parts
         unset(
             $config->Id,
             $config->Created,
