@@ -60,13 +60,25 @@ class DockerCmd extends Loader
         $cmd = ['docker', 'run'];
 
         // add options
+        if ($container->entrypoint) {
+            $cmd[] = '--entrypoint';
+            $cmd[] = $container->entrypoint;
+        }
+        foreach ($container->environment as $key => $value) {
+            $cmd[] = '--env';
+            $cmd[] = "$key=$value";
+        }
+        foreach ($container->labels as $key => $value) {
+            $cmd[] = '--label';
+            $cmd[] = "$key=$value";
+        }
         if ($container->name) {
             $cmd[] = '--name';
             $cmd[] = $container->name;
         }
-        if ($container->entrypoint) {
-            $cmd[] = '--entrypoint';
-            $cmd[] = $container->entrypoint;
+        if ($container->workingDir) {
+            $cmd[] = '--workdir';
+            $cmd[] = $container->workingDir;
         }
         // TODO add other options
 

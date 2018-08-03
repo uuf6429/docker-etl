@@ -3,9 +3,10 @@
 namespace uuf6429\DockerEtl\Task\Transformer;
 
 use PHPUnit\Framework\TestCase;
+use uuf6429\DockerEtl\Container\BindStorage;
 use uuf6429\DockerEtl\Container\Container;
 use uuf6429\DockerEtl\Container\Dictionary;
-use uuf6429\DockerEtl\Container\VolumeCollection;
+use uuf6429\DockerEtl\Container\StorageCollection;
 
 class SetValueTest extends TestCase
 {
@@ -20,8 +21,9 @@ class SetValueTest extends TestCase
     {
         $sut = new SetValue();
         $container = new Container();
+        $container->volumes->add(new BindStorage());
 
-        if($expectedExceptionMessage){
+        if ($expectedExceptionMessage) {
             $this->expectExceptionMessage($expectedExceptionMessage);
         }
 
@@ -31,17 +33,21 @@ class SetValueTest extends TestCase
 
     public function setValueDataProvider()
     {
+        $storage = new StorageCollection();
+        $storage->add(new BindStorage());
+
         return [
             'set container image' => [
                 '$optionValue' => 'image="myimage:1234"',
                 '$expectedState' => (object)[
-                    'name' => null,
+                    'name' => '',
                     'image' => 'myimage:1234',
                     'labels' => new Dictionary(),
                     'environment' => new Dictionary(),
-                    'entrypoint' => null,
-                    'cmd' => null,
-                    'volumes' => new VolumeCollection(),
+                    'entrypoint' => '',
+                    'cmd' => [],
+                    'volumes' => $storage,
+                    'workingDir' => '',
                 ],
                 '$expectedExceptionMessage' => null,
             ],

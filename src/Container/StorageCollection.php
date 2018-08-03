@@ -2,10 +2,10 @@
 
 namespace uuf6429\DockerEtl\Container;
 
-class VolumeCollection implements \ArrayAccess, \Countable
+class StorageCollection implements \ArrayAccess, \Countable
 {
     /**
-     * @var Volume[]
+     * @var Storage[]
      */
     protected $volumes = [];
 
@@ -22,10 +22,6 @@ class VolumeCollection implements \ArrayAccess, \Countable
      */
     public function offsetGet($offset)
     {
-        if (!isset($this->volumes[$offset])) {
-            $this->volumes[$offset] = new Volume();
-        }
-
         return $this->volumes[$offset];
     }
 
@@ -34,8 +30,8 @@ class VolumeCollection implements \ArrayAccess, \Countable
      */
     public function offsetSet($offset, $value)
     {
-        if (!$value instanceof Volume) {
-            throw new \InvalidArgumentException('Only volumes can be added to volume collection.');
+        if (!$value instanceof Storage) {
+            throw new \InvalidArgumentException('Only storage objects can be added to storage collection.');
         }
 
         $this->volumes[$offset] = $value;
@@ -55,5 +51,13 @@ class VolumeCollection implements \ArrayAccess, \Countable
     public function count()
     {
         return count($this->volumes);
+    }
+
+    /**
+     * @param Storage $value
+     */
+    public function add(Storage $value)
+    {
+        $this->volumes[] = $value;
     }
 }

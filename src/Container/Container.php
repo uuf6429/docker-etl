@@ -5,12 +5,12 @@ namespace uuf6429\DockerEtl\Container;
 class Container
 {
     /**
-     * @var null|string
+     * @var string
      */
     public $name;
 
     /**
-     * @var null|string
+     * @var string
      */
     public $image;
 
@@ -25,19 +25,24 @@ class Container
     public $environment;
 
     /**
-     * @var null|string|string[]
+     * @var string
      */
     public $entrypoint;
 
     /**
-     * @var null|string[]
+     * @var string[]
      */
     public $cmd;
 
     /**
-     * @var VolumeCollection|Volume[]
+     * @var StorageCollection|Storage[]
      */
     public $volumes;
+
+    /**
+     * @var string
+     */
+    public $workingDir;
 
     public function __construct()
     {
@@ -46,10 +51,13 @@ class Container
 
     public function reset()
     {
-        $this->name = null;
-        $this->image = null;
+        $this->name = '';
+        $this->image = '';
         $this->labels = new Dictionary();
         $this->environment = new Dictionary();
-        $this->volumes = new VolumeCollection();
+        $this->entrypoint = '';
+        $this->cmd = [];
+        $this->volumes = new StorageCollection();
+        $this->workingDir = '';
     }
 }
