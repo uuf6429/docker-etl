@@ -7,6 +7,8 @@ use Symfony\Component\Process\Process;
 
 class ComposeIntegrationTest extends TestCase
 {
+    use ReflectXDebugConfigTrait;
+
     private $testFile;
 
     protected function setUp()
@@ -71,6 +73,9 @@ YAML
             array_merge(
                 [
                     'php',
+                ],
+                $this->buildPhpArgs(),
+                [
                     'docker-etl',
                     "--extract-from-docker-compose={$this->testFile}:{$serviceName}",
                 ],
@@ -82,7 +87,9 @@ YAML
             ),
             dirname(__DIR__)
         );
-        $testProcess->mustRun();
+        $testProcess
+            ->setTimeout(null)
+            ->mustRun();
 
         $this->assertEquals(
             [

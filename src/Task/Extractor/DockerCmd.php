@@ -62,6 +62,8 @@ class DockerCmd extends Extractor
             $config->Config->Volumes
         );
 
+        $config->Config->Labels = (array)$config->Config->Labels;
+
         return $config;
     }
 
@@ -74,7 +76,7 @@ class DockerCmd extends Extractor
         $container->entrypoint = $extractedConfig->Config->Entrypoint;
         array_map([$container->environment, 'addFromString'], (array)$extractedConfig->Config->Env);
         $container->image = $extractedConfig->Config->Image;
-        $container->labels->addFromArray((array)$extractedConfig->Config->Labels);
+        $container->labels->addFromArray($extractedConfig->Config->Labels);
         foreach ($extractedConfig->Mounts as $mount) {
             if (($storage = $this->processMount($mount)) !== null) {
                 $container->volumes->add($storage);

@@ -7,6 +7,8 @@ use Symfony\Component\Process\Process;
 
 class CmdIntegrationTest extends TestCase
 {
+    use ReflectXDebugConfigTrait;
+
     private $testContainers = [];
 
     protected function tearDown()
@@ -22,26 +24,35 @@ class CmdIntegrationTest extends TestCase
     {
         $originalContainer = uniqid('phpunit-test-', true);
         $this->testContainers[] = $originalContainer;
-        (new Process("docker run --name $originalContainer hello-world"))->mustRun();
+        (new Process("docker run --name $originalContainer hello-world"))
+            ->setTimeout(null)
+            ->mustRun();
 
         $testProcess = new Process(
-            [
-                'php',
-                'docker-etl',
-                "--extract-from-docker-cmd=$originalContainer",
-                '--set=image="php:7-alpine"',
-                '--set=cmd=["php","-v"]',
-                '--load-into-docker-cmd=>>php://stdout',
-                '-vvv',
-            ],
+            array_merge(
+                [
+                    'php',
+                ],
+                $this->buildPhpArgs(),
+                [
+                    'docker-etl',
+                    "--extract-from-docker-cmd=$originalContainer",
+                    '--set=image="php:7-alpine"',
+                    '--set=cmd=["php","-v"]',
+                    '--load-into-docker-cmd=>>php://stdout',
+                    '-vvv',
+                ]
+            ),
             dirname(__DIR__)
         );
-        $testProcess->mustRun();
+        $testProcess
+            ->setTimeout(null)
+            ->mustRun();
 
         $this->assertEquals(
             [
                 'stdout' => [
-                    'docker run "--name" "' . $originalContainer . '" "php:7-alpine" php "-v"',
+                    'docker run "--env" "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" "--name" "' . $originalContainer . '" "php:7-alpine" php "-v"',
                     ''
                 ],
                 'stderr' => [

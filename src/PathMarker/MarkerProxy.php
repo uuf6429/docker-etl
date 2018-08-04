@@ -136,7 +136,7 @@ class MarkerProxy implements PropertyAccess, \ArrayAccess, \Countable, \Iterator
         $result = [];
         foreach ($this->target as $offset => $value) {
             $path = $this->buildArrayPath($offset);
-            $result[$offset] = $this->isProxyable($value) ? $this->wrapValue($value, $path) : $value;
+            $result[$offset] = $this->wrapValue($value, $path);
         }
 
         return new \ArrayIterator($result);
@@ -153,7 +153,9 @@ class MarkerProxy implements PropertyAccess, \ArrayAccess, \Countable, \Iterator
             return new self($value, $this->pathMarker, $path);
         }
 
-        $this->pathMarker->markPath($path);
+        if ($this->pathMarker->pathExist($path)) {
+            $this->pathMarker->markPath($path);
+        }
 
         return $value;
     }
