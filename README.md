@@ -146,7 +146,7 @@ If your task depends on some service (for example logging), just implement one o
 
 ## :thought_balloon: Rationale
 
-Since a long time, I've needed a tool to programmatically play around with docker containers.
-Recently, I needed to find a way to generate `docker run ...` for existing containers.
+Since a long time, I've needed a tool to programmatically play around with docker containers and recently I had the urgent need to find a way to generate `docker run ...` for backing up container configuration.
 Unfortunately, the tools that I found were either broken or did not do everything I needed.
-A particular pain point was the fact that they would support a particular use cases (eg, labels) and would not produce any warning.
+A particular pain point was the fact that they would not support a particular use cases (eg, labels) and simply ignore it, instead of produce any warning.
+This means that important configuration might be silently lost.
