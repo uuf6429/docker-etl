@@ -119,7 +119,7 @@ class DockerCompose extends Extractor
             return $cmd;
         }
 
-        if(trim($cmd)===''){
+        if (trim($cmd) === '') {
             return [];
         }
 
