@@ -82,7 +82,7 @@ Why not? Who doesn't like watermelons? Also, because they have a [fascinating hi
 
 ## :electric_plug: Extending
 
-If you'd like to extend the functionality with your own, you can do so by injecting PHP into the process:
+If you'd like to extend the functionality with your own, you can do so by injecting PHP code into the process using the `--include` option:
 ```bash
 $ docker-etl --include my-include.php \
              --set-random-name=cheese- \
@@ -115,14 +115,28 @@ class RandomNameSetter extends \uuf6429\DockerEtl\Task\Task
     }
 }
 
-/** @var \uuf6429\DockerEtl\Console\Application $application */
-$application->addTasks([new RandomNameSetter()]);
+/** @var \uuf6429\DockerEtl\Console\Application $this */
+$this->addTasks([new RandomNameSetter()]);
 ```
-*Note: feel free to have your class(es) somewhere else and then require/autoload them in your include file.*
+
+What did we do there?
+
+- the application will load `my-include.php` (because of `--include`)
+- the include describes a basic task class and registers it with the application
+- the application cli help will now contain an entry for the new task (eg; `docker-etl help run --include=my-include.php`)
+
+#### Notes
+
+- Feel free to have your class(es) somewhere else and then require/autoload them in your include file.
+- Each ETL step (Extract, Transform, Load) contain a bunch of tasks, which you invoke from the CLI.
+- A task might be customized with a value from the CLI (which can be required, optional or not), see [`Task::getTaskOptionMode()`](src/Task/Task.php#L22).
+- The Extraction and Loading steps each have a specific task class that ensure that future or unsupported features do not go unnoticed. See [Extractor](src/Task/Extractor/Extractor.php) and [Loader](src/Task/Loader/Loader.php) classes (for usage, look at their subclasses).
+- The `--include` option is always executed before all other options. This allows the program to show full CLI help, even for tasks from included files.
+- Be careful not to load additional classes/libraries that already exist in the application (search in [composer.lock](composer.lock) to be sure).
 
 ### Service Awareness
 
-If your task class depends on some service (for example logging), just implement one of the interfaces below and to receive the service:
+If your task depends on some service (for example logging), just implement one of the interfaces below to receive the service:
 
 - `\Psr\Log\LoggerAwareInterface`
 - `\uuf6429\DockerEtl\Console\ApplicationAwareInterface`
@@ -132,5 +146,7 @@ If your task class depends on some service (for example logging), just implement
 
 ## :thought_balloon: Rationale
 
-I needed a tool to generate `docker run ...` for existing containers.
-Unfortunately, the tools I found to do this were either broken or did not do everything I needed.
+Since a long time, I've needed a tool to programmatically play around with docker containers.
+Recently, I needed to find a way to generate `docker run ...` for existing containers.
+Unfortunately, the tools that I found were either broken or did not do everything I needed.
+A particular pain point was the fact that they would support a particular use cases (eg, labels) and would not produce any warning.

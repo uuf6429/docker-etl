@@ -2,11 +2,9 @@
 
 /** @noinspection PhpUnusedPrivateFieldInspection */
 
-namespace uuf6429\DockerEtl\PathMarker;
+namespace uuf6429\DockerEtl\Test\Unit\PathMarker;
 
-use PHPUnit\Framework\TestCase;
-
-class PathMarkerTestDataClass extends TestCase
+class PathMarkerTestDataClass
 {
     public $foo;
     protected $bar;

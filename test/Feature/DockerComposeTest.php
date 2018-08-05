@@ -1,11 +1,11 @@
 <?php
 
-namespace uuf6429\DockerEtl;
+namespace uuf6429\DockerEtl\Test\Feature;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
-class ComposeIntegrationTest extends TestCase
+class DockerComposeTest extends TestCase
 {
     use ReflectXDebugConfigTrait;
 
@@ -85,7 +85,7 @@ YAML
                     '-vvv',
                 ]
             ),
-            dirname(__DIR__)
+            dirname(TEST_ROOT)
         );
         $testProcess
             ->setTimeout(null)

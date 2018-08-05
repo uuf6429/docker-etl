@@ -1,12 +1,13 @@
 <?php
 
-namespace uuf6429\DockerEtl\Task\Transformer;
+namespace uuf6429\DockerEtl\Test\Unit\Task\Transformer;
 
 use PHPUnit\Framework\TestCase;
 use uuf6429\DockerEtl\Container\BindStorage;
 use uuf6429\DockerEtl\Container\Container;
 use uuf6429\DockerEtl\Container\Dictionary;
 use uuf6429\DockerEtl\Container\StorageCollection;
+use uuf6429\DockerEtl\Task\Transformer\SetValue;
 
 class SetValueTest extends TestCase
 {

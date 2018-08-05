@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\DockerEtl;
+namespace uuf6429\DockerEtl\Test\Feature;
 
 trait ReflectXDebugConfigTrait
 {

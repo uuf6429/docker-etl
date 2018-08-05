@@ -1,8 +1,9 @@
 <?php
 
-namespace uuf6429\DockerEtl\PathMarker;
+namespace uuf6429\DockerEtl\Test\Unit\PathMarker;
 
 use PHPUnit\Framework\TestCase;
+use uuf6429\DockerEtl\PathMarker\PathMarker;
 
 class PathMarkerTest extends TestCase
 {
