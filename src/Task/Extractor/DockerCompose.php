@@ -119,6 +119,10 @@ class DockerCompose extends Extractor
             return $cmd;
         }
 
-        // TODO somehow split string into command and arguments
+        if(trim($cmd)===''){
+            return [];
+        }
+
+        return \Clue\Arguments\split($cmd);
     }
 }

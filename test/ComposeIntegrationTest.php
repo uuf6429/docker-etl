@@ -125,16 +125,20 @@ YAML
             ],
             'modify built web service (web)' => [
                 '$serviceName' => 'web',
-                '$additionalTasks' => ['--set=image="cheese"'],
+                '$additionalTasks' => [
+                    '--set=image="pypy:3"',
+                    '--set=cmd[0]="pypy3"'
+                ],
                 '$expectedStdOut' =>  [
-                    'docker run "--env" "DATADOG_HOST=datadog" cheese',
+                    'docker run "--env" "DATADOG_HOST=datadog" "pypy:3" pypy3 "app.py"',
                     ''
                 ],
                 '$expectedStdErr' => [
                     '[debug] Applying task --extract-from-docker-compose=docker-compose.yml:web ...',
                     '[warning] The service builds an image and therefore the image tag cannot be determined.',
                     '[warning] Some configuration was not used by uuf6429\DockerEtl\Task\Extractor\DockerCompose: service.ports, service.volumes, service.links',
-                    '[debug] Applying task --set=image="cheese" ...',
+                    '[debug] Applying task --set=image="pypy:3" ...',
+                    '[debug] Applying task --set=cmd[0]="pypy3" ...',
                     '[debug] Applying task --load-into-docker-cmd=>>php://stdout ...',
                     '',
                 ],

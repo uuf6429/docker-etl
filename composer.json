@@ -19,7 +19,8 @@
     "symfony/process": "^3.0",
     "symfony/yaml": "^3.0",
     "padraic/phar-updater": "^1.0",
-    "justinrainbow/json-schema": "*"
+    "justinrainbow/json-schema": "*",
+    "clue/arguments": "2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.5",
