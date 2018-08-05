@@ -1,6 +1,5 @@
-/test
-/vendor
-/.gitignore
-/.git
-/Dockerfile
-/phpunit.xml.dist
+test
+vendor
+.gitignore
+.git
+phpunit.xml.dist

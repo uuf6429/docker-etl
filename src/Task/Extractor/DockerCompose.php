@@ -44,7 +44,7 @@ class DockerCompose extends Extractor
     {
         list($path, $name) = $this->parseValue($value);
 
-        $config = Yaml::parseFile($path, Yaml::PARSE_OBJECT_FOR_MAP);
+        $config = Yaml::parse(file_get_contents($path), Yaml::PARSE_OBJECT_FOR_MAP);
 
         if (!is_object($config) || empty($config->services)) {
             throw new \RuntimeException('Invalid file structure or no services defined.');

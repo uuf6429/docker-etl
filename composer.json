@@ -11,8 +11,13 @@
       "homepage": "http://christian.sciberras.me"
     }
   ],
+  "config": {
+    "platform": {
+      "php": "7.0"
+    }
+  },
   "require": {
-    "php": "^5.6 || ^7.0",
+    "php": "^7.0",
     "ext-json": "*",
     "psr/log": "^1.0",
     "symfony/console": "^3.0",
