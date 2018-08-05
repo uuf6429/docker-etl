@@ -1,0 +1,6 @@
+/test
+/vendor
+/.gitignore
+/.git
+/Dockerfile
+/phpunit.xml.dist
